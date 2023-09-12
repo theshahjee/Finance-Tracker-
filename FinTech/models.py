@@ -16,6 +16,7 @@ class ExpenseCategory(models.Model):
         return self.name
 
 class Income(models.Model):
+    user = models.ForeignKey(User, related_name='user_name', on_delete=models.CASCADE)
     name= models.CharField(max_length=50)
     date = models.DateTimeField(default=datetime.now())
     amount= models.FloatField()
@@ -27,6 +28,7 @@ class Income(models.Model):
 
 
 class Expense(models.Model):
+    user =models.ForeignKey(User,  related_name='Exp_user_name', on_delete=models.CASCADE)
     name= models.CharField(max_length=50)
     date = models.DateTimeField(default=datetime.now())
     amount= models.FloatField()
@@ -35,3 +37,23 @@ class Expense(models.Model):
 
     def __str__(self):
         return f"Rs.{self.amount} spent for {self.name}"
+    
+class Budget(models.Model):
+    user =models.ForeignKey(User,  related_name='budget_user', on_delete=models.CASCADE)
+    name=models.CharField(max_length=50)
+    balance = models.FloatField(default=0)
+    details= models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+    
+class Account(models.Model):
+    user=models.ForeignKey(User,  related_name='user_Ac', on_delete=models.CASCADE)
+    name=models.CharField(max_length=50)
+    balance = models.FloatField(default=0)
+    details= models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+
