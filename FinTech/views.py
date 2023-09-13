@@ -9,6 +9,11 @@ def dashboard(request):
     return HttpResponse("<h1>Welcome to Dashboard</h1>")
     # return render(request,"dashboard.html",{})
 
+# Income
+def income(request):
+    
+    return render(request,"income.html",{})
+
 # Index page
 def index(request):
     return render(request, "index.html",{})

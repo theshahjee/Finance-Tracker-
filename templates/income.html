@@ -1,0 +1,112 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Income Tracker</title>
+    <link rel="stylesheet" href="{% static 'boxicons/css/boxicons.min.css' %}">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <link rel="stylesheet" href="{% static './income.css' %}">
+    <style>
+        /* Add some CSS to style the form and button */
+        #incomeForm {
+            display: none;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        #addIncomeButton {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>FinTech.</h1>
+
+    <!-- Add Income Button -->
+    <button id="addIncomeButton" onclick="toggleIncomeForm()">Add Income</button>
+
+    <!-- Income Entry Form -->
+    <div id="incomeForm">
+        <div style="display: flex; justify-content: space-around;">
+            <h2>Add Income Details</h2>
+            <button>close</button>
+        </div>
+
+        <form id="incomeDetailsForm" method="post" action="/add-income">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required><br>
+
+            <label for="category">Category:</label>
+            <input type="text" id="category" name="category" required><br>
+
+            <label for="amount">Amount:</label>
+            <input type="number" id="amount" name="amount" required><br>
+
+            <label for="date">Date:</label>
+            <input type="date" id="date" name="date" required><br>
+
+            <label for="note">Note:</label>
+            <textarea id="note" name="note" rows="4"></textarea><br>
+
+            <input type="submit" value="Add" onclick="addIncomeEntry()">
+        </form>
+    </div>
+
+    <!-- Display Income Entries in a Table -->
+    <h2>Income Entries</h2>
+    <table id="incomeTable" border "1">
+        <tr>
+            <th>Sr.No.</th>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Amount</th>
+            <th>Date</th>
+            <th>Note</th>
+            <th>Edit</th>
+            <th>Delete</th>
+        </tr>
+    </table>
+
+    <script>
+        var incomeForm = document.getElementById("incomeForm");
+
+        function toggleIncomeForm() {
+            incomeForm.style.display = incomeForm.style.display === "none" ? "block" : "none";
+        }
+
+        function addIncomeEntry() {
+            var name = document.getElementById("name").value;
+            var category = document.getElementById("category").value;
+            var amount = document.getElementById("amount").value;
+            var date = document.getElementById("date").value;
+            var note = document.getElementById("note").value;
+
+            var incomeTable = document.getElementById("incomeTable");
+
+            var newRow = incomeTable.insertRow(-1);
+            var cell1 = newRow.insertCell(0);
+            var cell2 = newRow.insertCell(1);
+            var cell3 = newRow.insertCell(2);
+            var cell4 = newRow.insertCell(3);
+            var cell5 = newRow.insertCell(4);
+
+            cell1.innerHTML = name;
+            cell2.innerHTML = category;
+            cell3.innerHTML = amount;
+            cell4.innerHTML = date;
+            cell5.innerHTML = note;
+
+            // Clear the form
+            document.getElementById("incomeDetailsForm").reset();
+
+            // Hide the form after submission
+            incomeForm.style.display = "none";
+        }
+    </script>
+</body>
+
+</html>
