@@ -295,6 +295,29 @@ def income_report(request, duration):
         counter+=1
     return response
 
+# Settings
+def settings(request):
+    if request.user.is_authenticated:
+        profile= User.objects.get(id=request.user.id)
+        if request.method== "POST":
+            first_name= request.POST['first_name']
+            last_name= request.POST['last_name']
+            email= request.POST['email']
+
+            profile.first_name=first_name
+            profile.last_name=last_name
+            profile.email=email
+            profile.save()
+
+            print("Profile Updated")
+            return redirect("/profile")
+        else:
+            return render(request,"profile.html",{"profile":profile})
+    else:
+        return render(request, "/",{})
+
+
+
 # Index page
 def index(request):
     if request.user.is_authenticated:
@@ -327,6 +350,28 @@ def signup(request):
     else:
         return redirect("/dashboard")
     
+# Profile
+def profile(request):
+    if request.user.is_authenticated:
+        profile= User.objects.get(id=request.user.id)
+        if request.method== "POST":
+            first_name= request.POST['first_name']
+            last_name= request.POST['last_name']
+            email= request.POST['email']
+
+            profile.first_name=first_name
+            profile.last_name=last_name
+            profile.email=email
+            profile.save()
+
+            print("Profile Updated")
+            return redirect("/profile")
+        else:
+            return render(request,"profile.html",{"profile":profile})
+    else:
+        return render(request, "/",{})
+    
+
 # Login
 def login(request):
     if request.method== "POST":
