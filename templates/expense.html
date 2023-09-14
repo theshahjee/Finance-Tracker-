@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>FinTech. | Incomes</title>
+    <title>FinTech. | Expenses</title>
     <link rel="stylesheet" href="{% static './expense.css' %}">
     <style>
         /* Style for the close button */
@@ -18,15 +18,15 @@
     <a href="/dashboard"><h1>FinTech.</h1></a>
 
     <!-- Add Income Button -->
-    <button id="addIncomeButton" onclick="showIncomeForm()">Add Income</button>
+    <button id="addIncomeButton" onclick="showIncomeForm()">Add Expense</button>
 
     <!-- Income Entry Form (Initially Hidden) -->
     <div id="incomeForm" style="display: none; position: relative;">
         <!-- Close Button -->
         <span class="close-button" onclick="closeIncomeForm()">&#10006;</span>
 
-        <h2>Add Income Details</h2>
-        <form id="incomeDetailsForm" action="/incomes" method="post">
+        <h2>Add Expense Details</h2>
+        <form id="incomeDetailsForm" action="/expenses" method="post">
             {% csrf_token %}
             <label for="name">Name:</label>
             <input type="text" id="name" name="name" required><br>
@@ -53,7 +53,7 @@
     </div>
 
     <!-- Display Income Entries in a Table -->
-    <h2 style="color: white;">Income Entries</h2>
+    <h2 style="color: white;">Expense Entries</h2>
     <table id="incomeTable" border="1">
         <tr>
             <th>Sr.No.</th>
@@ -65,24 +65,24 @@
             <th>Edit</th>
             <th>Delete</th>
         </tr>
-        {% for income in incomes %}
+        {% for expense in expenses %}
         <tr>
             <td>{{forloop.counter}}</td>
-            <td>{{income.name}}</td>
-            <td>{{income.category}}</td>
-            <td>{{income.amount}}</td>
-            <td>{{income.date}}</td>
-            <td>{{income.note}}</td>
+            <td>{{expense.name}}</td>
+            <td>{{expense.category}}</td>
+            <td>{{expense.amount}}</td>
+            <td>{{expense.date}}</td>
+            <td>{{expense.note}}</td>
             <td>
                 <div class="rem">										
-                    <button type="button" onclick="location.href='/edit-income/{{income.id}}' ">
+                    <button type="button" onclick="location.href='/edit-expense/{{expense.id}}' ">
                         <span class="glyphicon glyphicon-trash">Edit</span>
                     </button>
                 </div>
             </td>
             <td>
                 <div class="rem">										
-                    <button type="button" onclick="location.href='/delete-income/{{income.id}}' ">
+                    <button type="button" onclick="location.href='/delete-expense/{{expense.id}}' ">
                         <span class="glyphicon glyphicon-trash">X</span>
                     </button>
                 </div>
