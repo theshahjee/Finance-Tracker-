@@ -16,6 +16,9 @@ urlpatterns = [
     path('expense-report/<str:duration>',views.expense_report, name="expense-report"),
     path('income-report/<str:duration>',views.income_report, name="income-report"),
 
+    path('settings',views.settings,name="settings"),
+    path('profile',views.profile,name="profile"),
+
     path('',views.index,name="index"),
     path('signup',views.signup,name="signup"),
     path('login',views.login,name="login"),
