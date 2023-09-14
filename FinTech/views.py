@@ -299,6 +299,8 @@ def income_report(request, duration):
 def settings(request):
     if request.user.is_authenticated:
         profile= User.objects.get(id=request.user.id)
+        expense_categories=ExpenseCategory.objects.all()
+        income_categories=IncomeCategory.objects.all()
         if request.method== "POST":
             first_name= request.POST['first_name']
             last_name= request.POST['last_name']
@@ -312,10 +314,51 @@ def settings(request):
             print("Profile Updated")
             return redirect("/profile")
         else:
-            return render(request,"profile.html",{"profile":profile})
+            return render(request,"settings.html",{"profile":profile,"expense_categories":expense_categories,"income_categories":income_categories})
     else:
         return render(request, "/",{})
 
+
+
+# Add Income category
+def add_income_category(request):
+    if request.user.is_authenticated:
+        if request.method=="POST":
+            catg_name=request.POST['name']
+            IncomeCategory.objects.create(name=catg_name)
+            print("Category Created")
+        return redirect("/settings")
+    else:
+        return redirect("/")
+
+# Add Ecpense category
+def add_expense_category(request):
+    if request.user.is_authenticated:
+        if request.method=="POST":
+            catg_name=request.POST['name']
+            ExpenseCategory.objects.create(name=catg_name)
+            print("Category Created")
+        return redirect("/settings")
+    else:
+        return redirect("/")
+
+# Remove expense category
+def remove_expense_category(request,id):
+    if request.user.is_authenticated:
+        ExpenseCategory.objects.get(id=id).delete()
+        print("Category Deleted")
+        return redirect("/settings")
+    else:
+        return redirect("/")
+    
+# Remove Income category
+def remove_income_category(request,id):
+    if request.user.is_authenticated:
+        IncomeCategory.objects.get(id=id).delete()
+        print("Category Deleted")
+        return redirect("/settings")
+    else:
+        return redirect("/")
 
 
 # Index page
@@ -354,6 +397,7 @@ def signup(request):
 def profile(request):
     if request.user.is_authenticated:
         profile= User.objects.get(id=request.user.id)
+        account= Account.objects.get(user=request.user.id)
         if request.method== "POST":
             first_name= request.POST['first_name']
             last_name= request.POST['last_name']
@@ -367,7 +411,7 @@ def profile(request):
             print("Profile Updated")
             return redirect("/profile")
         else:
-            return render(request,"profile.html",{"profile":profile})
+            return render(request,"profile.html",{"profile":profile,"balance":account.balance})
     else:
         return render(request, "/",{})
     
