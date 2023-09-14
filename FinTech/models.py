@@ -18,7 +18,7 @@ class ExpenseCategory(models.Model):
 class Income(models.Model):
     user = models.ForeignKey(User, related_name='user_name', on_delete=models.CASCADE)
     name= models.CharField(max_length=50)
-    date = models.DateTimeField(default=datetime.now())
+    date = models.DateField(default=date.today())
     amount= models.FloatField()
     category = models.ForeignKey(IncomeCategory, related_name='income_catg', on_delete=models.CASCADE)
     note=models.TextField()
@@ -30,7 +30,7 @@ class Income(models.Model):
 class Expense(models.Model):
     user =models.ForeignKey(User,  related_name='Exp_user_name', on_delete=models.CASCADE)
     name= models.CharField(max_length=50)
-    date = models.DateTimeField(default=datetime.now())
+    date = models.DateField(default=date.today())
     amount= models.FloatField()
     category = models.ForeignKey(ExpenseCategory, related_name='expense_catg', on_delete=models.CASCADE)
     note=models.TextField()

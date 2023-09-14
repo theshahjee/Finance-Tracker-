@@ -4,11 +4,16 @@ from . import views
 
 urlpatterns = [
     path('dashboard',views.dashboard,name="dashboard"),
-    path('income',views.income,name="income"),
-
+    path('incomes',views.income,name="incomes"),
+    path('expenses',views.expenses,name="expenses"),
+    path('delete-expense/<int:id>',views.delete_expense,name="delete-expense"),
+    path('edit-income/<int:id>',views.edit_income,name="edit-income"),
+    path('edit-expense/<int:id>',views.edit_expense,name="edit-expense"),
+    path('delete-income/<int:id>',views.delete_income,name="delete-income"),
 
 
     path('',views.index,name="index"),
     path('signup',views.signup,name="signup"),
     path('login',views.login,name="login"),
+    path('logout',views.logout,name="logout"),
 ]
