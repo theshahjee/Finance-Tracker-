@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect,HttpResponse
 from django.contrib.auth.models import User, auth 
-from datetime import date
+from datetime import date,datetime,timedelta
 from .models import Expense,Income,IncomeCategory,ExpenseCategory,Account,Budget
 # Create your views here.
 
@@ -9,7 +9,84 @@ def dashboard(request):
     if request.user.is_authenticated:
         my_account= Account.objects.get(user=request.user.id)
         balance= my_account.balance
-        return render(request,"dashboard.html",{"balance":balance})
+
+        # Expenses By category
+        out_dict={}
+        my_catg=ExpenseCategory.objects.all()
+        for catg in my_catg:
+            out_dict[catg.name]=0
+
+        expenses= Expense.objects.filter(user=request.user.id)
+        for expense in expenses:
+            catg=expense.category
+            pre_amount=expense.amount
+            pre_total=out_dict[catg.name]
+            out_dict[catg.name]=pre_amount+pre_total
+        # create list from above dict
+        catg_list = []
+        catg_total_list = []
+        items = out_dict.items()
+        for item in items:
+            catg_list.append(item[0]), catg_total_list.append(item[1])
+
+
+
+        # For Last 10 days  Income Data
+        Income_last_10days_amount=[]
+        for i in range(10):
+            _10days_income = Income.objects.filter(date__gte=date.today()-timedelta(days=i),date__lt=date.today()-timedelta(days=i-1)).order_by("id")
+
+            total_of_aday=0
+            for income in _10days_income:
+                total_of_aday+=income.amount
+            Income_last_10days_amount.append(total_of_aday)
+        Income_last_10days_amount.reverse()
+
+        # Last 10 days Expense Data
+        Expense_last_10days_amount=[]
+        for i in range(10):
+            _10days_expense = Expense.objects.filter(date__gte=date.today()-timedelta(days=i),date__lt=date.today()-timedelta(days=i-1)).order_by("id")
+
+            total_of_aday=0
+            for expense in _10days_expense:
+                total_of_aday+=expense.amount
+            Expense_last_10days_amount.append(total_of_aday)
+        Expense_last_10days_amount.reverse()
+
+        # Data Month format list i.e. 03/Feb,..
+        temp_pre_10days_list= [datetime.now().date()-timedelta(days=i) for i in range(10)]
+        pre_10days_list=[]            
+        for i in temp_pre_10days_list:
+            day=i.day
+            if i.month==1:
+                month="Jan"
+            if i.month==2:
+                month="Feb"
+            if i.month==3:
+                month="Mar"
+            if i.month==4:
+                month="Apil"
+            if i.month==5:
+                month="May"
+            if i.month==6:
+                month="June"
+            if i.month==7:
+                month="Jul"
+            if i.month==8:
+                month="Aug"
+            if i.month==9:
+                month="Sept"
+            if i.month==10:
+                month="Oct"
+            if i.month==11:
+                month="Nov"
+            else:
+                month="Dec"
+            pre_10days_list.append(f"{day}{month}")
+        pre_10days_list.reverse()
+
+
+        return render(request,"dashboard.html",{"balance":balance,"category_list":catg_list,"catg_total_list":catg_total_list,"pre_10days_list":pre_10days_list,"Income_last_10days_amount":Income_last_10days_amount,"Expense_last_10days_amount":Expense_last_10days_amount})
     else:
         return redirect("/")
 
@@ -173,6 +250,50 @@ def delete_income(request,id):
     else:
         return redirect("/")
 
+
+# For Report generation
+import csv
+def expense_report(request, duration):
+    if duration=="daily":
+        expenses = Expense.objects.filter(date__gte=datetime.now()).order_by("id")
+    elif duration=="weekly":
+        expenses = Expense.objects.filter(date__gte=datetime.now()-timedelta(days=7)).order_by("id")
+    elif duration=="monthly":
+        expenses = Expense.objects.filter(date__gte=datetime.now()-timedelta(days=30)).order_by("id")
+    else:
+        expenses = Expense.objects.all()  
+
+    response = HttpResponse(content_type='text/csv')  
+    response['Content-Disposition'] = f'attachment; filename="Expenses_{duration}_report.csv"'  
+    writer = csv.writer(response)  
+    writer.writerow(["Sr.No.","Name","Category","Amount","Date","Note"]) 
+    counter=1 
+    for expense in expenses:  
+        writer.writerow([counter,expense.name,expense.category,expense.amount,expense.date,expense.note])  
+        counter+=1
+    return response
+
+# For Report generation
+import csv
+def income_report(request, duration):
+    if duration=="daily":
+        incomes = Income.objects.filter(date__gte=datetime.now()).order_by("id")
+    elif duration=="weekly":
+        incomes = Income.objects.filter(date__gte=datetime.now()-timedelta(days=7)).order_by("id")
+    elif duration=="monthly":
+        incomes = Income.objects.filter(date__gte=datetime.now()-timedelta(days=30)).order_by("id")
+    else:
+        incomes = Income.objects.all()  
+
+    response = HttpResponse(content_type='text/csv')  
+    response['Content-Disposition'] = f'attachment; filename="Incomes_{duration}_report.csv"'  
+    writer = csv.writer(response)  
+    writer.writerow(["Sr.No.","Name","Category","Amount","Date","Note"]) 
+    counter=1 
+    for income in incomes:  
+        writer.writerow([counter,income.name,income.category,income.amount,income.date,income.note])  
+        counter+=1
+    return response
 
 # Index page
 def index(request):
