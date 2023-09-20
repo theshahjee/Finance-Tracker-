@@ -12,7 +12,7 @@ def dashboard(request):
 
         # Expenses By category
         out_dict={}
-        my_catg=ExpenseCategory.objects.all()
+        my_catg=ExpenseCategory.objects.filter(user=request.user.id)
         for catg in my_catg:
             out_dict[catg.name]=0
 
@@ -34,7 +34,7 @@ def dashboard(request):
         # For Last 10 days  Income Data
         Income_last_10days_amount=[]
         for i in range(10):
-            _10days_income = Income.objects.filter(date__gte=date.today()-timedelta(days=i),date__lt=date.today()-timedelta(days=i-1)).order_by("id")
+            _10days_income = Income.objects.filter(user=request.user.id,date__gte=date.today()-timedelta(days=i),date__lt=date.today()-timedelta(days=i-1)).order_by("id")
 
             total_of_aday=0
             for income in _10days_income:
@@ -45,7 +45,7 @@ def dashboard(request):
         # Last 10 days Expense Data
         Expense_last_10days_amount=[]
         for i in range(10):
-            _10days_expense = Expense.objects.filter(date__gte=date.today()-timedelta(days=i),date__lt=date.today()-timedelta(days=i-1)).order_by("id")
+            _10days_expense = Expense.objects.filter(user=request.user.id,date__gte=date.today()-timedelta(days=i),date__lt=date.today()-timedelta(days=i-1)).order_by("id")
 
             total_of_aday=0
             for expense in _10days_expense:
@@ -99,7 +99,7 @@ def income(request):
             amount=request.POST['amount']
             date=request.POST['date']
             note=request.POST.get('note')
-            category = IncomeCategory.objects.get(id=int(category_id))
+            category = IncomeCategory.objects.get(user=request.user.id,id=int(category_id))
 
             my_account= Account.objects.get(user=User.objects.get(id = request.user.id))
             my_account.balance+=float(amount)
@@ -109,7 +109,7 @@ def income(request):
             Income.objects.create(name=name,user=User.objects.get(id = request.user.id),category=category,amount=amount,date=date,note=note)
             return redirect('/incomes')
 
-        incomes_catg= IncomeCategory.objects.all()
+        incomes_catg= IncomeCategory.objects.filter(user=request.user.id)
         incomes= Income.objects.filter(user=request.user.id)
 
         return render(request,"income.html",{"categories":incomes_catg,"incomes":incomes})
@@ -125,7 +125,7 @@ def expenses(request):
             amount=request.POST['amount']
             date=request.POST['date']
             note=request.POST.get('note')
-            category = ExpenseCategory.objects.get(id=int(category_id))
+            category = ExpenseCategory.objects.get(user=request.user.id,id=int(category_id))
 
             my_account= Account.objects.get(user=User.objects.get(id = request.user.id))
             my_account.balance-=float(amount)
@@ -135,7 +135,7 @@ def expenses(request):
             Expense.objects.create(name=name,user=User.objects.get(id = request.user.id),category=category,amount=amount,date=date,note=note)
             return redirect('/expenses')
 
-        expenses_catg= ExpenseCategory.objects.all()
+        expenses_catg= ExpenseCategory.objects.filter(user=request.user.id)
         expenses= Expense.objects.filter(user=request.user.id)
 
         return render(request,"expense.html",{"categories":expenses_catg,"expenses":expenses})
@@ -153,7 +153,7 @@ def edit_income(request,id):
             amount=request.POST['amount']
             date=request.POST['date']
             note=request.POST.get('note')
-            category = IncomeCategory.objects.get(id=int(category_id))
+            category = IncomeCategory.objects.get(user=request.user.id,id=int(category_id))
 
             # Update Account Balance
             my_account= Account.objects.get(user=User.objects.get(id = request.user.id))
@@ -176,7 +176,7 @@ def edit_income(request,id):
             print("Income Details Updated")
             return redirect("/incomes")
 
-        categories= IncomeCategory.objects.all()
+        categories= IncomeCategory.objects.filter(user=request.user.id)
         return render(request,"income_edit.html",{"income":income,"categories":categories})
     else:
         return redirect("/")
@@ -191,7 +191,7 @@ def edit_expense(request,id):
             amount=request.POST['amount']
             date=request.POST['date']
             note=request.POST.get('note')
-            category = ExpenseCategory.objects.get(id=int(category_id))
+            category = ExpenseCategory.objects.get(user=request.user.id,id=int(category_id))
 
             # Update Account Balance
             my_account= Account.objects.get(user=User.objects.get(id = request.user.id))
@@ -214,7 +214,7 @@ def edit_expense(request,id):
             print("expense Details Updated")
             return redirect("/expenses")
 
-        categories= ExpenseCategory.objects.all()
+        categories= ExpenseCategory.objects.filter(user=request.user.id)
         return render(request,"expense_edit.html",{"expense":expense,"categories":categories})
     else:
         return redirect("/")
@@ -255,13 +255,13 @@ def delete_income(request,id):
 import csv
 def expense_report(request, duration):
     if duration=="daily":
-        expenses = Expense.objects.filter(date__gte=datetime.now()).order_by("id")
+        expenses = Expense.objects.filter(user=request.user.id,date__gte=datetime.now()).order_by("date")
     elif duration=="weekly":
-        expenses = Expense.objects.filter(date__gte=datetime.now()-timedelta(days=7)).order_by("id")
+        expenses = Expense.objects.filter(user=request.user.id,date__gte=datetime.now()-timedelta(days=7)).order_by("date")
     elif duration=="monthly":
-        expenses = Expense.objects.filter(date__gte=datetime.now()-timedelta(days=30)).order_by("id")
+        expenses = Expense.objects.filter(user=request.user.id,date__gte=datetime.now()-timedelta(days=30)).order_by("date")
     else:
-        expenses = Expense.objects.all()  
+        expenses = Expense.objects.filter(user=request.user.id).order_by("date")  
 
     response = HttpResponse(content_type='text/csv')  
     response['Content-Disposition'] = f'attachment; filename="Expenses_{duration}_report.csv"'  
@@ -277,13 +277,13 @@ def expense_report(request, duration):
 import csv
 def income_report(request, duration):
     if duration=="daily":
-        incomes = Income.objects.filter(date__gte=datetime.now()).order_by("id")
+        incomes = Income.objects.filter(user=request.user.id,date__gte=datetime.now()).order_by("date")
     elif duration=="weekly":
-        incomes = Income.objects.filter(date__gte=datetime.now()-timedelta(days=7)).order_by("id")
+        incomes = Income.objects.filter(user=request.user.id,date__gte=datetime.now()-timedelta(days=7)).order_by("date")
     elif duration=="monthly":
-        incomes = Income.objects.filter(date__gte=datetime.now()-timedelta(days=30)).order_by("id")
+        incomes = Income.objects.filter(user=request.user.id,date__gte=datetime.now()-timedelta(days=30)).order_by("date")
     else:
-        incomes = Income.objects.all()  
+        incomes = Income.objects.filter(user=request.user.id).order_by("date")
 
     response = HttpResponse(content_type='text/csv')  
     response['Content-Disposition'] = f'attachment; filename="Incomes_{duration}_report.csv"'  
@@ -299,8 +299,8 @@ def income_report(request, duration):
 def settings(request):
     if request.user.is_authenticated:
         profile= User.objects.get(id=request.user.id)
-        expense_categories=ExpenseCategory.objects.all()
-        income_categories=IncomeCategory.objects.all()
+        expense_categories=ExpenseCategory.objects.filter(user=request.user.id)
+        income_categories=IncomeCategory.objects.filter(user=request.user.id)
         if request.method== "POST":
             first_name= request.POST['first_name']
             last_name= request.POST['last_name']
@@ -325,7 +325,8 @@ def add_income_category(request):
     if request.user.is_authenticated:
         if request.method=="POST":
             catg_name=request.POST['name']
-            IncomeCategory.objects.create(name=catg_name)
+            user=User.objects.get(id=request.user.id)
+            IncomeCategory.objects.create(user=user,name=catg_name)
             print("Category Created")
         return redirect("/settings")
     else:
@@ -336,7 +337,8 @@ def add_expense_category(request):
     if request.user.is_authenticated:
         if request.method=="POST":
             catg_name=request.POST['name']
-            ExpenseCategory.objects.create(name=catg_name)
+            user=User.objects.get(id=request.user.id)
+            ExpenseCategory.objects.create(user=user,name=catg_name)
             print("Category Created")
         return redirect("/settings")
     else:
@@ -345,7 +347,7 @@ def add_expense_category(request):
 # Remove expense category
 def remove_expense_category(request,id):
     if request.user.is_authenticated:
-        ExpenseCategory.objects.get(id=id).delete()
+        ExpenseCategory.objects.get(user=request.user.id,id=id).delete()
         print("Category Deleted")
         return redirect("/settings")
     else:
@@ -354,7 +356,7 @@ def remove_expense_category(request,id):
 # Remove Income category
 def remove_income_category(request,id):
     if request.user.is_authenticated:
-        IncomeCategory.objects.get(id=id).delete()
+        IncomeCategory.objects.get(user=request.user.id,id=id).delete()
         print("Category Deleted")
         return redirect("/settings")
     else:
@@ -370,28 +372,25 @@ def index(request):
 
 # Signup 
 def signup(request):
-    if request.user.is_authenticated:
-        if request.method == "POST":
-            first_name= request.POST['first_name']
-            last_name= request.POST['last_name']
-            email= request.POST['email']
-            password= request.POST['password']
+    if request.method == "POST":
+        first_name= request.POST['first_name']
+        last_name= request.POST['last_name']
+        email= request.POST['email']
+        password= request.POST['password']
 
-            if User.objects.filter(username=email).exists():
-                print("Username is already used")
-                return redirect('/')
-            else:
-                user = User.objects.create_user(username=email,password= password, email=email, first_name=first_name,last_name=last_name)
-                user.save()
-                print("User Account created successfully")
-                # Create Account for users
-                Account.objects.create(user=user,balance=0,details="Primary account for User="+str(user.id),name=f'Account for {user.id}-{first_name}')
-                print("Users Account Created!!")
-
-                return redirect('/')
-        return render(request,"index.html",{})
-    else:
-        return redirect("/dashboard")
+        if User.objects.filter(username=email).exists():
+            print("Username is already used")
+            return redirect('/')
+        else:
+            user = User.objects.create_user(username=email,password= password, email=email, first_name=first_name,last_name=last_name)
+            user.save()
+            print("User Account created successfully")
+            # Create Account for users
+            Account.objects.create(user=user,balance=0,details="Primary account for User="+str(user.id),name=f'Account for {user.id}-{first_name}')
+            print("Users Account Created!!")
+            return redirect('/')
+        
+    return render(request,"index.html",{})
     
 # Profile
 def profile(request):
