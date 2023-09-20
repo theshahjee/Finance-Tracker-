@@ -6,12 +6,14 @@ from django.contrib.auth.models import User
 
 # For Income Categories
 class IncomeCategory(models.Model):
-    name = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=50)
+    user = models.ForeignKey(User, related_name='user_inc_catg', on_delete=models.CASCADE)
     def __str__(self):
         return self.name
 # For Expense Categories
 class ExpenseCategory(models.Model):
-    name = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=50)
+    user = models.ForeignKey(User, related_name='user_exp_catg', on_delete=models.CASCADE)
     def __str__(self):
         return self.name
 
