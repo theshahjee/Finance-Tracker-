@@ -123,7 +123,7 @@ import mimetypes
 mimetypes.add_type("text/css", ".css", True)
 mimetypes.add_type("text/css", ".min.css", True)
 mimetypes.add_type("text/html", ".html", True)
-mimetypes.add_type("text/html", ".js", True)
+mimetypes.add_type("text/javascript", ".js", True)
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
