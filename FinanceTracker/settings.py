@@ -27,6 +27,9 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://fintech.chetanrathod.me',
+]
 
 # Application definition
 
@@ -112,6 +115,13 @@ USE_I18N = True
 
 USE_TZ = True
 
+
+# To solve static files load issue on aws
+SECURE_CROSS_ORIGIN_OPENER_POLICY = None
+
+import mimetypes
+mimetypes.add_type("text/css", ".css", True)
+mimetypes.add_type("text/html", ".html", True)
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
