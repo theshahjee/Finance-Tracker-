@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile Settings</title>
-    <link rel="stylesheet" href="{% static 'profile.css' %}">
-    <link rel="stylesheet" href="{% static 'nav.css' %}">
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+    <link rel="stylesheet" href="{% static 'css/nav.css' %}">
 </head>
 <body>
 
@@ -44,7 +44,7 @@
         <div class="btm">
         <div class="left-container">
             <div class="profile-photo">
-                <img src="{% static 'dark-gradient.jpg' %}" alt="Profile Photo">
+                <img src="{% static 'img/dark-gradient.jpg' %}" alt="Profile Photo">
             </div>
             <H2 id="balance">Account Balance:</H1>
             <input type="text" class="accbal" readonly placeholder="Balance" value="{{balance}}">
