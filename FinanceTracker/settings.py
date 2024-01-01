@@ -121,9 +121,9 @@ SECURE_CROSS_ORIGIN_OPENER_POLICY = None
 
 import mimetypes
 mimetypes.add_type("text/css", ".css", True)
-mimetypes.add_type("text/css", ".min.css", True)
 mimetypes.add_type("text/html", ".html", True)
 mimetypes.add_type("text/javascript", ".js", True)
+mimetypes.add_type("text/css", ".min.css", True)
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
